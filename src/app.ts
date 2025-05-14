@@ -1,20 +1,38 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import express from "express";
+import cors from "cors";
+import path from "path";
+import dotenv from "dotenv";
+import connectDB from "./database";
+import movieRoutes from "./routes/movieRoutes";
+import reviewRoutes from "./routes/reviewRoutes";
 
-var indexRouter = require('./routes');
-var usersRouter = require('./routes/users');
+(async () => {
+    try {
+        await connectDB()
+        console.log("Connected to DB")
+    } catch(e: unknown) {
+        if (e instanceof Error) {
+            console.error(`Blad polaczenia z mongodb: ${e}`);
+        } else {
+            console.log(`Nie moge okreslic bledu polaczenia: ${e}`)
+        }
+        process.exit(1)
+    }
+})()
 
-var app = express();
+dotenv.config();
 
-app.use(logger('dev'));
+const app = express();
+
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(express.static(path.join(__dirname, "../public")));
+app.use("/movies", movieRoutes);
+app.use("/revies", reviewRoutes);
 
-module.exports = app;
+app.get("/", (req, res) => {
+    res.json({message: "API Express + TypeScript dziala"});
+});
+
+export default app;
