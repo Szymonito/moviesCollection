@@ -8,7 +8,7 @@ export interface Review extends Document {
 }
 
 const ReviewSchema = new mongoose.Schema({
-    moovieId: {type: Schema.Types.ObjectId, ref:"Movie", required: true},
+    movieId: {type: Schema.Types.ObjectId, ref:"Movie", required: true},
     rating: {type: Number, min:0, max:10, required: true},
     comments: {type: String, required: true},
 })
